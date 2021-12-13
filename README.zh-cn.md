@@ -24,7 +24,7 @@
 │
 ├─OpsMain.Shared                    //Shared Model
 │
-├─OpsMain.StorageLayer              //Entity Framework
+└─OpsMain.StorageLayer              //Entity Framework
 
 ```
 
