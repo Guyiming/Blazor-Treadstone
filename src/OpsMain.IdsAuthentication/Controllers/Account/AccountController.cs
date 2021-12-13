@@ -33,7 +33,7 @@ namespace IdentityServerHost.Quickstart.UI
     public class AccountController : Controller
     {
         //private readonly TestUserStore _users;
-        OpsDbContext _dbContext;
+        TreadstoneMainContext _dbContext;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -46,7 +46,7 @@ namespace IdentityServerHost.Quickstart.UI
             IAuthenticationSchemeProvider schemeProvider,
             IIdentityProviderStore identityProviderStore,
             IEventService events,
-            OpsDbContext dbContext)
+            TreadstoneMainContext dbContext)
         {
             // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
             //_users = users ?? throw new Exception("Please call 'AddTestUsers(TestUsers.Users)' on the IIdentityServerBuilder in Startup or remove the TestUserStore from the AccountController.");

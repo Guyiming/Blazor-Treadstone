@@ -15,7 +15,7 @@ namespace OpsMain.StorageLayer
     {
         public static void AddSqlService(this IServiceCollection services, IConfiguration configuation, string conSection)
         {
-            services.AddDbContext<OpsDbContext>(opt =>
+            services.AddDbContext<TreadstoneMainContext>(opt =>
             {
                 var constr = configuation.GetConnectionString(conSection);
                 opt.UseSqlServer(constr, o => o.EnableRetryOnFailure());

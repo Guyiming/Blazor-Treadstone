@@ -163,10 +163,12 @@ namespace IdentityServerHost.Quickstart.UI
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
+                #region 数据库迁移
                 serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
 
                 var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
                 context.Database.Migrate();
+                #endregion
 
                 //设置Clients
                 context.Clients.RemoveRange(context.Clients.ToArray());//清空所有

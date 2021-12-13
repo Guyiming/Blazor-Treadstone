@@ -9,7 +9,7 @@ using OpsMain.StorageLayer;
 
 namespace OpsMain.StorageLayer.Migrations
 {
-    [DbContext(typeof(OpsDbContext))]
+    [DbContext(typeof(TreadstoneMainContext))]
     [Migration("20210906085137_Remove-Props-ParentName")]
     partial class RemovePropsParentName
     {

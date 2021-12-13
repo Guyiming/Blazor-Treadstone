@@ -13,9 +13,9 @@ namespace OpsMain.IdsAuthentication.Extensions
 {
     public class ResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
     {
-        OpsDbContext dbContext;
+        TreadstoneMainContext dbContext;
 
-        public ResourceOwnerPasswordValidator(OpsDbContext dbContext)
+        public ResourceOwnerPasswordValidator(TreadstoneMainContext dbContext)
         {
             this.dbContext = dbContext;
         }

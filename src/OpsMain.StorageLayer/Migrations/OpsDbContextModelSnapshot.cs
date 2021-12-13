@@ -8,7 +8,7 @@ using OpsMain.StorageLayer;
 
 namespace OpsMain.StorageLayer.Migrations
 {
-    [DbContext(typeof(OpsDbContext))]
+    [DbContext(typeof(TreadstoneMainContext))]
     partial class OpsDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

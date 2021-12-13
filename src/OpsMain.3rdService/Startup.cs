@@ -67,7 +67,7 @@ namespace OpsMain._3rdService
             services.AddAuthentication("Bearer")
                .AddJwtBearer("Bearer", opt =>
                {
-                   opt.Authority = Configuration["Authority"];// "http://ids.guyiming.shop";
+                   opt.Authority = Configuration["Authority"];
                    opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                    {
                        ValidateAudience = false

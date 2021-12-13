@@ -9,7 +9,7 @@ using OpsMain.StorageLayer;
 
 namespace OpsMain.StorageLayer.Migrations
 {
-    [DbContext(typeof(OpsDbContext))]
+    [DbContext(typeof(TreadstoneMainContext))]
     [Migration("20210907012109_AddSysMenForeignKey")]
     partial class AddSysMenForeignKey
     {

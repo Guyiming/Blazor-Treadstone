@@ -9,7 +9,7 @@ using OpsMain.StorageLayer;
 
 namespace OpsMain.StorageLayer.Migrations
 {
-    [DbContext(typeof(OpsDbContext))]
+    [DbContext(typeof(TreadstoneMainContext))]
     [Migration("20210908024007_ConfigRelations")]
     partial class ConfigRelations
     {

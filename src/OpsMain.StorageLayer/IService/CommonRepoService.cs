@@ -11,9 +11,9 @@ namespace OpsMain.StorageLayer.IService
 {
     public class CommonRepoService<T> : ICommonRepoService<T> where T : BaseEntity
     {
-        OpsDbContext context;
+        TreadstoneMainContext context;
 
-        public CommonRepoService(OpsDbContext context)
+        public CommonRepoService(TreadstoneMainContext context)
         {
             this.context = context;
         }

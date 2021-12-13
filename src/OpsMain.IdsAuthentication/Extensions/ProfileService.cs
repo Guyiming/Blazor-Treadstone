@@ -13,9 +13,9 @@ namespace OpsMain.IdsAuthentication.Extensions
 {
     public class ProfileService : IProfileService
     {
-        OpsDbContext dbContext;
+        TreadstoneMainContext dbContext;
         IMemoryCache _cache;
-        public ProfileService(OpsDbContext dbContext,IMemoryCache cache)
+        public ProfileService(TreadstoneMainContext dbContext,IMemoryCache cache)
         {
             this.dbContext = dbContext;
             _cache = cache;

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace OpsMain.StorageLayer
 {
-    public class OpsDbContext : DbContext
+    public class TreadstoneMainContext : DbContext
     {
-        public OpsDbContext(DbContextOptions<OpsDbContext> options) : base(options)
+        public TreadstoneMainContext(DbContextOptions<TreadstoneMainContext> options) : base(options)
         {
             this.Database.EnsureCreated();
         }
