@@ -1,0 +1,64 @@
+﻿@using System.Text
+@inject IJSRuntime JS
+
+
+<pre><code class="@CodeLanguage" id="@DisplayId">
+@IndenttedCode
+</code></pre>
+
+<div style="display:none" id="@HideId">
+@ChildContent
+</div>
+
+
+
+@code {
+
+    string HideId { get; set; } = Guid.NewGuid().ToString();
+    string DisplayId { get; set; } = Guid.NewGuid().ToString();
+    string IndenttedCode { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string CodeLanguage { get; set; } = "language-csharp";
+
+    [Parameter]
+    public bool Indent { get; set; } = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            IndenttedCode = await JS.InvokeAsync<string>("getInnterText", HideId);
+            if (Indent)
+            {
+                IndenttedCode = IndentCode(IndenttedCode);
+            }
+            StateHasChanged();
+
+            await JS.InvokeVoidAsync("highlightElementById", DisplayId);
+        }
+    }
+
+    public string IndentCode(string originCode)
+    {
+        if (!string.IsNullOrWhiteSpace(originCode))
+        {
+            var lines = originCode.Split('\n').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+            var spaceCount = lines[0].Length - lines[0].TrimStart().Length;
+            StringBuilder sb = new StringBuilder();
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    string s = line.Substring(spaceCount);
+                    sb.AppendLine(s);
+                }
+            }
+            return sb.ToString();
+        }
+        return string.Empty;
+    }
+}

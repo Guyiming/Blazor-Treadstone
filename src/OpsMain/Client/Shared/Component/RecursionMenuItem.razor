@@ -1,0 +1,36 @@
+﻿
+@if (Menu.SubMenus?.Count > 0)
+{
+    <SubMenu Key="@Menu.Id.ToString()">
+        <TitleTemplate>
+            <span>
+                <Icon IconFont="@Menu.Icon" />
+                <span>@Menu.MenuName</span>
+            </span>
+        </TitleTemplate>
+        <ChildContent>
+            @foreach (var m in Menu.SubMenus)
+            {
+                <MenuItem Key="@m.Id.ToString()" Icon="@m.Icon">
+                    <MenuLink Href="@m.Href">@m.MenuName</MenuLink>
+                </MenuItem>
+            }
+        </ChildContent>
+    </SubMenu>
+}
+else
+{
+    <MenuItem Key="@Menu.Id.ToString()">
+        <IconTemplate>
+            <Icon Type="@Menu.Icon" IconFont="@Menu.Icon" />
+        </IconTemplate>
+        <ChildContent>
+            <MenuLink Href="@Menu.Href" Match="NavLinkMatch.All">@Menu.MenuName</MenuLink>
+        </ChildContent>
+    </MenuItem>
+}
+
+@code {
+    [Parameter]
+    public SysMenuDto Menu { get; set; }
+}

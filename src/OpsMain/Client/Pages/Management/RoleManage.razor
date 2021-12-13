@@ -1,0 +1,215 @@
+﻿@page "/management/role"
+@attribute [Authorize(PolicyString.MenuAuthorize)]
+@inherits BasePage
+@inject HttpClient freeClient
+@inject RestRoleService RoleService
+@inject RestFreeService FreeService
+@using OpsMain.Shared.Toolkit
+
+<Space>
+    <SpaceItem>
+        <Button OnClick="args=> { IsEdit = false; ShowCard = true; currentRole = new SysRoleDto(); }">新增</Button>
+    </SpaceItem>
+    <SpaceItem>
+        @if (SelectedRows?.Count() > 0)
+        {
+            <Button OnClick="DeleteSelectedRoles" Danger>删除选中项</Button>
+        }
+    </SpaceItem>
+</Space>
+
+<br />
+
+<Spin Size="large" Spinning="IsLoading">
+    <Table TItem="SysRoleDto"
+           DataSource="AllRoles"
+           @bind-SelectedRows="SelectedRows">
+
+        <Selection Key="@(context.Id.ToString())"></Selection>
+        <Column Title="名称" @bind-Field="context.RoleName" Sortable></Column>
+        <Column Title="更新时间" @bind-Field="context.UpdateTime"></Column>
+        <Column Title="创建时间" @bind-Field="context.CreateTime"></Column>
+        <ActionColumn Title="操作">
+            <Space>
+                <SpaceItem>
+                    <Button OnClick="args=> OnEdit(args,context)">编辑</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Danger OnClick="args => DeleteRole(context.Id, args)">删除</Button>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+    </Table>
+</Spin>
+
+
+
+
+<Modal Title="@(IsEdit?"编辑角色":"新增角色")"
+       Visible="ShowCard"
+       OnOk="OnSaveAsync"
+       OnCancel="args=> { ShowCard = false; }"
+       MaskClosable="false">
+    <Form Model="currentRole" LabelColSpan="8" WrapperColSpan="16">
+        <FormItem Label="名称">
+            <Input Placeholder="" @bind-Value="context.RoleName" />
+        </FormItem>
+        <FormItem Label="菜单权限">
+            <Tree Checkable TItem="SysMenuDto"
+                  DefaultCheckedKeys="DefaultCheckedKeys"
+                  @bind-CheckedKeys="CheckedKeys"
+                  DataSource="AllMenus"
+                  IsLeafExpression="x=>x.DataItem.SubMenus.Count==0"
+                  TitleExpression="t=>t.DataItem.MenuName"
+                  KeyExpression="t=>t.DataItem.Id.ToString()"
+                  ChildrenExpression="t=>t.DataItem.SubMenus">
+            </Tree>
+        </FormItem>
+    </Form>
+</Modal>
+
+
+@code {
+
+    List<SysRoleDto> AllRoles = new List<SysRoleDto>();
+    IEnumerable<SysRoleDto> SelectedRows;
+    SysRoleDto currentRole;
+    bool ShowCard, IsEdit, IsLoading;
+    List<SysMenuDto> AllMenus;
+    string[] CheckedKeys, DefaultCheckedKeys;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.Title = "角色管理";
+        await base.OnInitializedAsync();
+        
+
+        IsLoading = true;
+        AllRoles = await RoleService.SearchAsync(this, null);
+
+        IsLoading = false;
+        await LoadAllMenusAsync();
+    }
+
+
+
+    private async Task OnEdit(MouseEventArgs args, SysRoleDto current)
+    {
+        currentRole = current;
+        IsEdit = true;
+
+        var roles = await RoleService.SearchAsync(this, $"RoleName==\"{current.RoleName}\"");
+        var role = roles.FirstOrDefault();
+        if (role != null)
+        {
+            ShowCard = true;
+            DefaultCheckedKeys = role.Menus.Select(m => m.Id.ToString()).ToArray();
+            CheckedKeys = role.Menus.Select(m => m.Id.ToString()).ToArray();
+
+            base.ShowNotice(NotificationType.Info, $"菜单数量{role.Menus.Count()}");
+        }
+        else
+        {
+            base.ShowNotice(NotificationType.Error, "当前角色不存在");
+        }
+    }
+
+    private async Task OnAddSaveAsync()
+    {
+        Console.WriteLine(CheckedKeys.ToJsonString());
+        SysRoleDto result = await RoleService.CreatedAsync(this, currentRole.RoleName, CheckedKeys);
+        if (result != null)
+        {
+            AllRoles.Add(result);
+            ShowCard = false;
+            base.ShowNotice(NotificationType.Success, "创建成功");
+        }
+    }
+    private async Task OnEditSaveAsync()
+    {
+        currentRole.Menus = CheckedKeys.Select(o => new SysMenuDto { Id = Convert.ToInt64(o) });
+        var role = await RoleService.EditAsync(this, currentRole);
+        if (role != null)
+        {
+            var index = AllRoles.IndexOf(currentRole);
+            AllRoles[index] = role;
+            ShowCard = false;
+
+            base.ShowNotice(NotificationType.Success, "编辑成功");
+        }
+    }
+
+    /// <summary>
+    /// 保存(编辑/新增)
+    /// </summary>
+    /// <param name="args"></param>
+    private async Task OnSaveAsync(MouseEventArgs args)
+    {
+        if (IsEdit)
+        {
+            await OnEditSaveAsync();
+        }
+        else
+        {
+            await OnAddSaveAsync();
+        }
+        StateHasChanged();
+    }
+    /// <summary>
+    /// 删除单条数据
+    /// </summary>
+    /// <param name="roleId"></param>
+    /// <param name="args"></param>
+    private void DeleteRole(long roleId, MouseEventArgs args)
+    {
+        base.ShowOkCancelDialog("确定要删除吗?", null, true, async (args) =>
+        {
+            var role = await RoleService.DeleteAsync(this, new List<long> { roleId });
+            var r = AllRoles.First(o => o.Id == roleId);
+            AllRoles.Remove(r);
+            ShowCard = false;
+            StateHasChanged();
+            base.ShowNotice(NotificationType.Success, "删除成功");
+
+        }, args =>
+        {
+            ShowCard = false;
+            return Task.CompletedTask;
+        });
+
+    }
+    /// <summary>
+    /// 删除选择的数据（多选）
+    /// </summary>  
+    /// <param name="args"></param>
+    private void DeleteSelectedRoles(MouseEventArgs args)
+    {
+        base.ShowOkCancelDialog($"确定删除这[{SelectedRows?.Count()}]个吗?", null, true, async args =>
+        {
+            var role = await RoleService.DeleteAsync(this, SelectedRows.Select(r => r.Id).ToList());
+            foreach (var r in SelectedRows)
+            {
+                AllRoles.Remove(r);
+            }
+            ShowCard = false;
+            StateHasChanged();
+
+            base.ShowNotice(NotificationType.Success, "删除成功");
+
+        },
+        args =>
+        {
+            ShowCard = false;
+            return Task.CompletedTask;
+        });
+    }
+
+    /// <summary>
+    /// 获取所有的menu数据
+    /// </summary>
+    /// <returns></returns>
+    private async Task LoadAllMenusAsync()
+    {
+        AllMenus = await FreeService.GetMenuTreeAsync(this);
+    }
+}

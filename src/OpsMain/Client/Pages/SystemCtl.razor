@@ -1,0 +1,60 @@
+﻿@page "/systemctl"
+@inherits BasePage
+
+<Row Gutter="(16,24)">
+    <AntDesign.Col Sm="24" Lg="10">
+        <AntDesign.Input Placeholder="english only" @bind-Value="@ServiceName">
+            <Prefix>服务名：</Prefix>
+            <Suffix>.service</Suffix>
+        </AntDesign.Input>
+    </AntDesign.Col>
+
+    <AntDesign.Col Sm="24" Lg="14">
+        <AntDesign.Input Placeholder="" @bind-Value="@ServiceDescription">
+            <Prefix>服务描述：</Prefix>
+        </AntDesign.Input>
+    </AntDesign.Col>
+
+
+
+    <AntDesign.Col Sm="24">
+        <AntDesign.Input Placeholder="/usr/bin/dotnet /home/ubuntu/apps/Iot.SignalR/Iot.SignalR.dll" @bind-Value="@ExecCmd">
+            <Prefix>执行命令：</Prefix>
+        </AntDesign.Input>
+    </AntDesign.Col>
+
+
+
+
+    <AntDesign.Col Sm="24">
+        <AntDesign.Input Placeholder="/home/ubuntu/apps/Iot.SignalR" @bind-Value="@WorkingDirectory">
+            <Prefix>设置执行命令的工作目录：</Prefix>
+        </AntDesign.Input>
+    </AntDesign.Col>
+</Row>
+<br />
+<br />
+
+
+<Button Type="@AntDesign.ButtonType.Primary" Shape="round" @onclick="@GenerateService" Size="large" Block>生成</Button>
+
+<br />
+<br />
+<Row>
+    <TextArea @bind-Value="@GenerateResult" style="height:300px;"></TextArea>
+</Row>
+
+<Divider></Divider>
+<Row>
+    <Collapse DefaultActiveKey='@(new[] { "1"})'>
+        <Panel Header="后续操作" Key="1">
+            <Paragraph>1.将生成的文本另存为<Text Code> @(ServiceName).serivce</Text>文件。</Paragraph>
+            <Paragraph>2.将这个文件存放在<Text Code> /usr/lib/systemd/system</Text>目录下，并赋予754权限</Paragraph>
+            <Paragraph>3.然后执行开机启动或者取消开机启动，<Text Code>systemctl enable/disable nginx.service</Text> </Paragraph>
+        </Panel>
+    </Collapse>
+</Row>
+
+
+
+

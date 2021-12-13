@@ -1,0 +1,50 @@
+﻿@inherits LayoutComponentBase
+@inject IconService iconService
+@inject HttpClient DefaultClient
+@inject RestFreeService FreeService
+
+<Layout Style="min-height:100vh;">
+    <Sider Collapsible Style="overflow:auto;height:100vh;">
+        <div class="logo"></div>
+
+        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Inline">
+            @foreach (var m in allMenus)
+            {
+                <RecursionMenuItem Menu="@m"></RecursionMenuItem>
+            }
+        </Menu>
+    </Sider>
+    <Layout>
+        <Header style="padding:0;padding:0 16px 0 0; background-color:white;">
+            <LoginDisplay></LoginDisplay>
+        </Header>
+        <Content style="margin:18px 16px;overflow:initial;">
+            @*@Body*@
+            <ReuseTabs Class="top-row px-4" TabPaneClass="content px-4" />
+        </Content>
+        <Footer Style="text-align:center "> ©@DateTime.Now.Year Powered by Ant Design Blazor</Footer>
+    </Layout>
+
+</Layout>
+
+
+
+@code {
+    List<SysMenuDto> allMenus = new List<SysMenuDto>();
+    bool collapsed;
+    void onCollapse(bool collapsed)
+    {
+        this.collapsed = collapsed;
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        await iconService.CreateFromIconfontCN("//at.alicdn.com/t/font_2735473_kghs3bjtusa.js");
+        allMenus = await FreeService.GetMenuTreeAsync(null);
+
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+}

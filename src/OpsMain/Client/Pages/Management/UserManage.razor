@@ -1,0 +1,118 @@
+﻿@page "/management/user"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inherits BasePage
+@attribute [Authorize(PolicyString.MenuAuthorize)]
+@inject RestRoleService RoleService
+
+<Spin Size="large" Spinning="IsLoading">
+    <AntDesign.Table @ref="Table"
+                     TItem="SysUserDto"
+                     DataSource="AllUsers"
+                     Total="Total"
+                     @bind-PageIndex="PageIndex"
+                     @bind-PageSize="PageSize"
+                     @bind-SelectedRows="SelectedRows">
+        <Selection Key="@(context.Id.ToString())"></Selection>
+        <Column Title="Id" @bind-Field="context.Id"></Column>
+        <Column Title="用户名" @bind-Field="context.UserName" Sortable></Column>
+        <Column Title="邮箱" @bind-Field="context.Email"></Column>
+        <Column Title="角色" @bind-Field="context.RoleNames">
+            @foreach (var role in context.RoleNames)
+            {
+                <Tag>@role</Tag>
+            }
+        </Column>
+        <Column Title="创建时间" @bind-Field="context.CreateTime" Format="yyyy-MM-dd HH:mm:ss"></Column>
+        <Column Title="更新时间" @bind-Field="context.UpdateTime" Format="yyyy-MM-dd HH:mm:ss"></Column>
+        <ActionColumn Title="操作">
+            <Space>
+                <SpaceItem>
+                    <Button OnClick="args=>OnAssignRole(context)">分配角色</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Danger>删除</Button>
+                </SpaceItem>
+            </Space>
+        </ActionColumn>
+
+
+    </AntDesign.Table>
+</Spin>
+
+<Modal Title="分配角色"
+       Visible="ShowModal"
+       OnOk="OnSaveAsync"
+       OnCancel="args=> { ShowModal = false; }"
+       MaskClosable="false">
+    <Form Model="currentUser" LabelColSpan="8" WrapperColSpan="16">
+        <FormItem Label="用户名">
+            <Input Disabled @bind-Value="context.UserName" />
+        </FormItem>
+        <FormItem Label="角色">
+            <Select Mode="multiple"
+                    Placeholder="请选择"
+                    @bind-Values="SelectedRoleIds"
+                    TItemValue="long"
+                    TItem="string"
+                    EnableSearch
+                    AllowClear>
+                <SelectOptions>
+                    @foreach (var role in AllRoles)
+                    {
+                        <SelectOption TItemValue="long" TItem="string" Value="@role.Id" Label="@role.RoleName" />
+                    }
+                </SelectOptions>
+            </Select>
+        </FormItem>
+    </Form>
+</Modal>
+
+
+@code {
+    bool ShowModal;
+    SysUserDto currentUser;
+    IEnumerable<long> SelectedRoleIds { get; set; }
+    List<SysRoleDto> AllRoles;
+
+    IEnumerable<SysUserDto> AllUsers;
+    IEnumerable<SysUserDto> SelectedRows;
+    ITable Table;
+    bool IsLoading;
+    int Total, PageIndex = 1, PageSize = 30;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.Title = "用户管理";
+        await base.OnInitializedAsync();
+
+        IsLoading = true;
+
+        AllUsers = await UserService.SearchAsync(this, null);
+        Total = AllUsers?.Count() ?? 0;
+
+        AllRoles = await RoleService.SearchAsync(this, null);
+
+        SelectedRoleIds = base.CurrentUser.RoleIds;
+        IsLoading = false;
+    }
+
+    /// <summary>
+    /// 分配角色-保存
+    /// </summary>
+    /// <returns></returns>
+    private async Task OnSaveAsync()
+    {
+        await UserService.EditAsync(this, currentUser.UserName, SelectedRoleIds.ToList());
+        ShowModal = false;
+        base.ShowNotice(NotificationType.Success, "保存成功");
+    }
+
+    private void OnAssignRole(SysUserDto current)
+    {
+        ShowModal = true;
+        currentUser = current;
+    }
+}

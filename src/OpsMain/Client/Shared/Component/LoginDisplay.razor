@@ -1,0 +1,132 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inherits BasePage
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<div style="text-align:right">
+    <AuthorizeView>
+        <Authorized>
+            <Space>
+                <SpaceItem>
+                    <DropdownButton @ref="RefDropdownButton" Icon="user" Type="@((AntDesign.ButtonType.Text,AntDesign.ButtonType.Default))">
+                        <ChildContent>
+                            Hi,@context.User.Identity.Name
+                        </ChildContent>
+                        <Overlay>
+                            <Menu>
+                                <MenuItem>
+                                    <Button Type="@AntDesign.ButtonType.Text" OnClick="MyProfile" Icon="user">个人信息</Button>
+                                </MenuItem>
+                                <MenuItem>
+                                    <Button Type="@AntDesign.ButtonType.Text" OnClick="ChangePwd" Icon="key">修改密码</Button>
+                                </MenuItem>
+                                <MenuItem>
+                                    <Button Type="@AntDesign.ButtonType.Text" OnClick="OnSignOut" Icon="logout">退出</Button>
+                                </MenuItem>
+                            </Menu>
+                        </Overlay>
+                    </DropdownButton>
+                </SpaceItem>
+
+            </Space>
+        </Authorized>
+        <NotAuthorized>
+            <Space Size="@("middle")">
+                <SpaceItem>
+                    <Button Type="@AntDesign.ButtonType.Link" OnClick="OnRegister">注册</Button>
+                </SpaceItem>
+                <SpaceItem>
+                    <Button Type="@AntDesign.ButtonType.Link" OnClick="OnSignIn">登录</Button>
+                </SpaceItem>
+            </Space>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+<Modal Title="修改密码"
+       Visible="ShowChangePwdDialog"
+       OnOk="OnSaveAsync"
+       OnCancel="args=> { ShowChangePwdDialog = false; }"
+       MaskClosable="false">
+    <Form @ref="_changePwdForm" Model="CurrentUser" LabelColSpan="8" WrapperColSpan="16">
+        <ChildContent>
+            <FormItem Label="用户名">
+                <Input @bind-Value="context.UserName" Disabled />
+            </FormItem>
+            <FormItem Label="原密码">
+                <InputPassword @bind-Value="context.Password"></InputPassword>
+            </FormItem>
+            <FormItem Label="新密码">
+                <InputPassword @bind-Value="context.NewPassword"></InputPassword>
+            </FormItem>
+        </ChildContent>
+
+    </Form>
+</Modal>
+
+<Modal Title="个人信息"
+       Width="900d"
+       Visible="ShowProfileDialog"
+       OnOk="args=>ShowProfileDialog=false"
+       OnCancel="args=>ShowProfileDialog=false">
+    <Descriptions Bordered>
+        <DescriptionsItem Title="用户名">@CurrentUser.UserName</DescriptionsItem>
+        <DescriptionsItem Title="邮箱">@CurrentUser.Email</DescriptionsItem>
+        <DescriptionsItem Title="角色">@(string.Join("; ",CurrentUser.RoleNames))</DescriptionsItem>
+        <DescriptionsItem Title="创建时间">@CurrentUser.CreateTime</DescriptionsItem>
+    </Descriptions>
+</Modal>
+
+
+@code {
+
+    bool ShowChangePwdDialog { get; set; }
+    bool ShowProfileDialog { get; set; }
+    Form<SysUserDto> _changePwdForm;
+
+    DropdownButton RefDropdownButton { get; set; }
+
+
+    void OnRegister(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("authentication/register");
+    }
+    void OnSignIn(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("authentication/login");
+    }
+
+    async Task OnSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+
+    void MyProfile(MouseEventArgs args)
+    {
+        ShowProfileDialog = true;
+    }
+
+    void ChangePwd(MouseEventArgs args)
+    {
+        ShowChangePwdDialog = true;
+    }
+    /// <summary>
+    /// 修改密码-保存
+    /// </summary>
+    /// <param name="args"></param>
+    async Task OnSaveAsync(MouseEventArgs args)
+    {
+        if (_changePwdForm.Validate())
+        {
+            var result = await UserService.ChangePwdAsync(this, CurrentUser);
+            if (result)
+            {
+                ShowChangePwdDialog = false;
+                base.ShowNotice(NotificationType.Success, "操作成功");
+            }
+        }
+    }
+}
+
+

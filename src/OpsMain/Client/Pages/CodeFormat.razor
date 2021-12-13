@@ -1,0 +1,40 @@
+﻿@page "/codeformat"
+@inherits BasePage
+@using System.Text
+
+
+<Row>
+    <AntDesign.Col Span="24">
+        <TextArea @bind-Value="formattedCode" style="height:400px;"></TextArea>
+    </AntDesign.Col>
+</Row>
+<br />
+<br />
+<Button Type="@AntDesign.ButtonType.Primary" Shape="round" @onclick="@FormatCode" Size="large" Block>格式化</Button>
+<br />
+<br />
+
+
+@code {
+    string formattedCode;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        base.Title = "代码格式化";
+    }
+    private void FormatCode()
+    {
+        var lines = formattedCode.Split('\n');
+        var spaceCount = lines[0].Length - lines[0].TrimStart(' ').Length;
+        StringBuilder sb = new StringBuilder();
+        foreach (var line in lines)
+        {
+            if (!string.IsNullOrWhiteSpace(line))
+            {
+                string s = line.Substring(spaceCount);
+                sb.AppendLine(s);
+            }
+        }
+        formattedCode = sb.ToString();
+    }
+}

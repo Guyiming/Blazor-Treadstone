@@ -1,0 +1,113 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+
+
+
+/*主页的loading动画*/
+
+@keyframes spinner-detail {
+    0% {
+        transform: rotate(0)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+.spinner-detail div {
+    box-sizing: border-box !important
+}
+
+.spinner-detail > div {
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    top: 14px;
+    left: 14px;
+    border-radius: 50%;
+    border: 8px solid #000;
+    border-color: #fe718d transparent #fe718d transparent;
+    animation: spinner-detail 1s linear infinite;
+}
+
+    .spinner-detail > div:nth-child(2) {
+        border-color: transparent
+    }
+
+        .spinner-detail > div:nth-child(2) div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(45deg);
+        }
+
+            .spinner-detail > div:nth-child(2) div:before, .spinner-detail > div:nth-child(2) div:after {
+                content: "";
+                display: block;
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                top: -8px;
+                left: 24px;
+                background: #fe718d;
+                border-radius: 50%;
+                box-shadow: 0 64px 0 0 #fe718d;
+            }
+
+            .spinner-detail > div:nth-child(2) div:after {
+                left: -8px;
+                top: 24px;
+                box-shadow: 64px 0 0 0 #fe718d;
+            }
+
+.spinner-dual-ring {
+    margin: 100px auto;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.spinner-detail {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    backface-visibility: hidden;
+    transform-origin: 0 0; /* see note above */
+}
+
+    .spinner-detail div {
+        box-sizing: content-box;
+    }
+
+
+
+/*#dropdownbutton > div {
+    display: block;
+}*/
