@@ -12,10 +12,39 @@
 
 
 # 1. 项目结构
+```
+├─Blazor
+│  ├─OpsMain.Client                 //WASM Client
+│  │  
+│  └─OpsMain.Server                 //WASM Host
+│
+├─OpsMain.3rdService                //Backend Service
+│
+├─OpsMain.IdsAuthentication         //IdentityServer
+│
+├─OpsMain.Shared					//Shared Model
+│
+├─OpsMain.StorageLayer				//Entity Framework
 
+```
 
 
 # 2. 使用方式
+## 2.1 创建数据库和初始化数据
+直接运行项目 **OpsMain.IdsAuthentication** 和 **OpsMain.3rdService** 即可。初始化完成之后，默认的用户密码为`admin`和`admin`。
+
+## 2.2 调试运行
+
+分别启动以下三个项目即可：
+- OpsMain.IdsAuthentication
+- OpsMain.3rdService
+- OpsMain.Server
+
+运行截图：
+
+![Screenshot](screenshot.gif)
+
+
 
 
 
