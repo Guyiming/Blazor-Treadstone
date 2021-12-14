@@ -51,8 +51,7 @@ namespace OpsMain._3rdService._Controllers
             var delEntities = _menuService.Query().Where(o => ids.Contains(o.Id));
             if (delEntities?.Count() > 0)
             {
-                await _menuService.DeleteBatchAsync(delEntities);
-                await _menuService.SaveChangesAsync();
+                await delEntities.DeleteBatchAsync();
             }
             return null;
         }

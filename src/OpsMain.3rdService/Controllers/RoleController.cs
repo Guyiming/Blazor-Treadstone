@@ -59,12 +59,8 @@ namespace OpsMain._3rdService.Controllers
         [HttpPost]
         public async Task<ActionResult<SysRoleDto>> DeleteAsync([FromBody] List<long> ids)
         {
-            var delEntities = _roleService.Query().Where(o => ids.Contains(o.Id));
-
-            await _roleService.DeleteBatchAsync(delEntities);
-            await _roleMenuSrv.DeleteBatchAsync(_roleMenuSrv.Query().Where(o => ids.Contains(o.RoleId)));
-
-            await _roleService.SaveChangesAsync();
+            await _roleService.Query().Where(o => ids.Contains(o.Id)).DeleteBatchAsync();
+            await _roleMenuSrv.Query().Where(o => ids.Contains(o.RoleId)).DeleteBatchAsync();
 
             return null;
         }
@@ -79,7 +75,7 @@ namespace OpsMain._3rdService.Controllers
             }
             tRole.RoleName = t.RoleName;
             _roleService.Update(tRole);
-            await _roleMenuSrv.DeleteBatchAsync(_roleMenuSrv.Query(null).Where(o => o.RoleId == tRole.Id));
+            await _roleMenuSrv.Query(null).Where(o => o.RoleId == tRole.Id).DeleteBatchAsync();
             await _roleMenuSrv.CreateAsync(t.Menus.Select(m => new R_RoleMenu { MenuId = m.Id, RoleId = tRole.Id }));
             await _roleService.SaveChangesAsync();
             return _mapper.Map<SysRoleDto>(tRole);
