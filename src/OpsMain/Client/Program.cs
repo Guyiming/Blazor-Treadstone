@@ -36,12 +36,12 @@ namespace OpsMain.Client
                 client.BaseAddress = new Uri(builder.Configuration["3rdResource"]);
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
-            builder.Services.AddHttpClient("freeapi", client =>
-            {
-                client.BaseAddress = new Uri(builder.Configuration["3rdResource"]);
-            });
+            //builder.Services.AddHttpClient("freeapi", client =>
+            //{
+            //    client.BaseAddress = new Uri(builder.Configuration["3rdResource"]);
+            //});
 
-            // new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("webapi"));
 
 
