@@ -1,17 +1,15 @@
-﻿using OpsMain.StorageLayer.Entity;
-using System;
+﻿using EFCore.BulkExtensions;
+using OpsMain.StorageLayer.Entity;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
 
 namespace OpsMain.StorageLayer.IService
 {
     public class CommonRepoService<T> : ICommonRepoService<T> where T : BaseEntity
     {
-        TreadstoneMainContext context;
+        private TreadstoneMainContext context;
 
         public CommonRepoService(TreadstoneMainContext context)
         {
@@ -28,7 +26,6 @@ namespace OpsMain.StorageLayer.IService
             await context.Set<T>().AddRangeAsync(list);
         }
 
-
         public async Task DeleteAsync(long id)
         {
             var user = await context.Set<T>().FindAsync(id);
@@ -37,7 +34,6 @@ namespace OpsMain.StorageLayer.IService
                 context.Set<T>().Remove(user);
             }
         }
-        
 
         public async Task<T> GetByIdAsync(long id)
         {
@@ -54,15 +50,14 @@ namespace OpsMain.StorageLayer.IService
             context.Set<T>().Update(t);
         }
 
-        #region Powered By: Dynamic.Linq.Core
         /// <summary>
-        /// 批量删除，,会自动SaveChanges
+        /// 批量新增，会自动SaveChanges
         /// </summary>
-        /// <param name="listToDelete"></param>
+        /// <param name="list"></param>
         /// <returns></returns>
-        public async Task DeleteBatchAsync(IQueryable<T> listToDelete)
+        public async Task CreateBulkyAsync(IEnumerable<T> list)
         {
-            await listToDelete.DeleteFromQueryAsync();
+            await context.BulkInsertAsync<T>(list.ToList());
         }
 
         /// <summary>
@@ -77,26 +72,5 @@ namespace OpsMain.StorageLayer.IService
 
             return context.Set<T>();
         }
-
-        /// <summary>
-        /// 更新数据,会自动SaveChanges
-        /// </summary>
-        /// <param name="listToUpdate"></param>
-        /// <param name="updateExpression">如：x => new Customer {IsActive = false}，表示将listToUpdate里所有数据的IsActive设置为false</param>
-        /// <returns></returns>
-        public async Task UpdateBatchAsync(IQueryable<T> listToUpdate, Expression<Func<T, T>> updateExpression)
-        {
-            await listToUpdate.UpdateFromQueryAsync(updateExpression);
-        }
-        /// <summary>
-        /// 批量新增，,会自动SaveChanges
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public async Task CreateBulkyAsync(IEnumerable<T> list)
-        {
-            await context.BulkInsertAsync(list);
-        } 
-        #endregion
     }
 }

@@ -20,10 +20,6 @@ namespace OpsMain.StorageLayer.IService
 
         void Update(T user);
 
-        Task UpdateBatchAsync(IQueryable<T> listToUpdate, Expression<Func<T, T>> updateExpression);
-
-        Task DeleteBatchAsync(IQueryable<T> listToDelete);
-
         Task DeleteAsync(long id);
 
         Task SaveChangesAsync();

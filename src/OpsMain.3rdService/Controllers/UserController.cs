@@ -124,7 +124,7 @@ namespace OpsMain._3rdService.Controllers
             var user = GetByUserName(t.UserName);
             if (user != null)
             {
-                await _roleUserService.DeleteBatchAsync(_roleUserService.Query($"UserId=={user.Id}"));
+                await _roleUserService.Query($"UserId=={user.Id}").DeleteBatchAsync();
                 await _roleUserService.CreateBulkyAsync(t.RoleIds.Select(o => new R_RoleUser { RoleId = o, UserId = user.Id }));
             }
             return null;
@@ -147,9 +147,7 @@ namespace OpsMain._3rdService.Controllers
         [HttpPost]
         public async Task<ActionResult<SysUserDto>> DeleteAsync([FromBody] List<long> ids)
         {
-            var targetUsers = _userServie.Query().Where(o => ids.Contains(o.Id));
-            await _userServie.DeleteBatchAsync(targetUsers);
-            await _userServie.SaveChangesAsync();
+            await _userServie.Query().Where(o => ids.Contains(o.Id)).DeleteBatchAsync();
             return null;
         }
 
