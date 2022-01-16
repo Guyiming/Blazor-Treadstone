@@ -36,11 +36,6 @@ namespace OpsMain.Client
                 client.BaseAddress = new Uri(builder.Configuration["3rdResource"]);
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
-            //builder.Services.AddHttpClient("freeapi", client =>
-            //{
-            //    client.BaseAddress = new Uri(builder.Configuration["3rdResource"]);
-            //});
-
 
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("webapi"));
 
@@ -52,6 +47,7 @@ namespace OpsMain.Client
                 builder.Configuration.Bind("LocalOidc", opt.ProviderOptions);
 
             });
+
             //ÉèÖÃ²ßÂÔ
             builder.Services.AddAuthorizationCore(opt =>
             {
@@ -61,6 +57,7 @@ namespace OpsMain.Client
                     builder.Requirements.Add(new MenuRequirement());
                 });
             });
+
             //builder.Services.AddApiAuthorization().AddAccountClaimsPrincipalFactory<CustomUserFactory>();
 
 
