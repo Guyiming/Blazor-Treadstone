@@ -29,7 +29,7 @@ Tech stack：
 ```
 
 # 2. Requirement
-SQL SERVER 2019 installed.
+SQL SERVER installed.
 
 # 3. Usage
 ## 3.1 Create database and Init data
