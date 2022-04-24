@@ -27,15 +27,18 @@
 └─OpsMain.StorageLayer              //Entity Framework
 
 ```
+# 2. 配置要求
+需要安装SQL SERVER
 
-
-# 2. 使用方式
-## 2.1 创建数据库和初始化数据
+# 3. 使用方式
+## 3.1 创建数据库和初始化数据
 直接运行项目 **OpsMain.IdsAuthentication** 和 **OpsMain.3rdService** 即可。
 
-初始化完成之后，默认的用户密码为`admin`和`admin`。
+初始化完成之后，在SQL SERVER里能看到有两个数据库被创建。
 
-## 2.2 调试运行
+最后，默认的用户密码为`admin`和`admin`。
+
+## 3.2 调试运行
 
 分别启动以下三个项目即可：
 - OpsMain.IdsAuthentication
