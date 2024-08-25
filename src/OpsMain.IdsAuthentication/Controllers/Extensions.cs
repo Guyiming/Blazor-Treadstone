@@ -3,8 +3,12 @@
 
 
 using System;
+using System.Threading.Tasks;
 using Duende.IdentityServer.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IdentityServerHost.Quickstart.UI
 {
@@ -26,6 +30,16 @@ namespace IdentityServerHost.Quickstart.UI
             controller.HttpContext.Response.Headers["Location"] = "";
             
             return controller.View(viewName, new RedirectViewModel { RedirectUrl = redirectUri });
+        }
+
+        /// <summary>
+        /// Determines if the authentication scheme support signout.
+        /// </summary>
+        public static async Task<bool> GetSchemeSupportsSignOutAsync(this HttpContext context, string scheme)
+        {
+            var provider = context.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>();
+            var handler = await provider.GetHandlerAsync(context, scheme);
+            return (handler is IAuthenticationSignOutHandler);
         }
     }
 }

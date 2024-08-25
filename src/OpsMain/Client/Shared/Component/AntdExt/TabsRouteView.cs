@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace OpsMain.Client.Shared.Component.AntdExt
 {
-    public class TabsRouteView : ReuseTabsRouteView
+    public class TabsRouteView : RouteView
     {
         protected override void Render(RenderTreeBuilder builder)
         {
@@ -24,7 +24,7 @@ namespace OpsMain.Client.Shared.Component.AntdExt
 
             var body = CreateBody(RouteData, Navmgr.Uri);
 
-            builder.OpenComponent<CascadingValue<ReuseTabsRouteView>>(0);
+            builder.OpenComponent<CascadingValue<RouteView>>(0);
             builder.AddAttribute(1, "Name", "RouteView");
             builder.AddAttribute(2, "Value", this);
 

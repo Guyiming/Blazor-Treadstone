@@ -18,7 +18,8 @@ namespace OpsMain.StorageLayer
             services.AddDbContext<TreadstoneMainContext>(opt =>
             {
                 var constr = configuation.GetConnectionString(conSection);
-                opt.UseSqlServer(constr, o => o.EnableRetryOnFailure());
+                opt.UseMySql(constr, ServerVersion.AutoDetect(constr));
+                //opt.UseSqlServer(constr, o => o.EnableRetryOnFailure());
             });
         }
 

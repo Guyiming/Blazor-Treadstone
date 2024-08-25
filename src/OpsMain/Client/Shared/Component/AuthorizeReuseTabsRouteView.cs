@@ -10,8 +10,17 @@ using OpsMain.Client.Shared.Component.AntdExt;
 
 namespace OpsMain.Client.Shared.Component
 {
-    public sealed class AuthorizeReuseTabsRouteView : ReuseTabsRouteView
+    public sealed class AuthorizeReuseTabsRouteView : RouteView
     {
+        private sealed class AuthorizeRouteViewCore : AuthorizeViewCore
+        {
+            [Parameter]
+            public RouteData RouteData { get; set; } = default!;
+
+            protected override IAuthorizeData[] GetAuthorizeData()
+                => AttributeAuthorizeDataCache.GetAuthorizeDataForType(RouteData.PageType);
+        }
+
         private static readonly RenderFragment<AuthenticationState> _defaultNotAuthorizedContent
             = state => builder => builder.AddContent(0, "Not authorized");
         private static readonly RenderFragment _defaultAuthorizingContent
@@ -89,12 +98,6 @@ namespace OpsMain.Client.Shared.Component
             builder.OpenComponent<EmptyPage>(0);
             builder.AddAttribute(1, nameof(EmptyPage.ChildContent), content);
             builder.CloseComponent();
-
-
-            //builder.OpenComponent<LayoutView>(0);
-            //builder.AddAttribute(1, nameof(LayoutView.Layout), DefaultLayout);//AuthorizingLayout ??
-            //builder.AddAttribute(2, nameof(LayoutView.ChildContent), content);
-            //builder.CloseComponent();
         }
 
         private void RenderNotAuthorizedInDefaultLayout(RenderTreeBuilder builder, AuthenticationState authenticationState)
@@ -109,13 +112,6 @@ namespace OpsMain.Client.Shared.Component
             RenderContentInDefaultLayout(builder, content);
         }
 
-        private sealed class AuthorizeRouteViewCore : AuthorizeViewCore
-        {
-            [Parameter]
-            public RouteData RouteData { get; set; } = default!;
 
-            protected override IAuthorizeData[] GetAuthorizeData()
-                => AttributeAuthorizeDataCache.GetAuthorizeDataForType(RouteData.PageType);
-        }
     }
 }
