@@ -28,14 +28,18 @@ Tech stack：
 
 ```
 
+# 2. Requirement
+SQL SERVER installed.
 
-# 2. Usage
-## 2.1 Create database and Init data
+# 3. Usage
+## 3.1 Create database and Init data
 Directly run projects **OpsMain.IdsAuthentication** and **OpsMain.3rdService** 。
 
-After this and without any error prompt, the init operation is done. The default username and password are both `admin`。
+After this and without any error prompt, the init operation is done. You can saw two databases created in SQL SERVER. 
 
-## 2.2 Debug and Run
+And the default username and password are both `admin`。
+
+## 3.2 Debug and Run
 
 Run those three projects：
 - OpsMain.IdsAuthentication
