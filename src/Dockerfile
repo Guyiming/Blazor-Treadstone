@@ -11,12 +11,12 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj", "src/OpsMain.IdsAuthentication/"]
-COPY ["src/OpsMain.StorageLayer/OpsMain.StorageLayer.csproj", "src/OpsMain.StorageLayer/"]
-COPY ["src/OpsMain/Shared/OpsMain.Shared.csproj", "src/OpsMain/Shared/"]
-RUN dotnet restore "./src/OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj"
+COPY ["OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj", "OpsMain.IdsAuthentication/"]
+COPY ["OpsMain.StorageLayer/OpsMain.StorageLayer.csproj", "OpsMain.StorageLayer/"]
+COPY ["OpsMain/Shared/OpsMain.Shared.csproj", "OpsMain/Shared/"]
+RUN dotnet restore "./OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj"
 COPY . .
-WORKDIR "/src/src/OpsMain.IdsAuthentication"
+WORKDIR "/src/OpsMain.IdsAuthentication"
 RUN dotnet build "./OpsMain.IdsAuthentication.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
