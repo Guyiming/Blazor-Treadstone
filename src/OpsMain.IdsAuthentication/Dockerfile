@@ -1,23 +1,30 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
+# This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
+
+# This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["NuGet.Config", "."]
-COPY ["SysOps/OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj", "SysOps/OpsMain.IdsAuthentication/"]
-COPY ["SysOps/OpsMain.StorageLayer/OpsMain.StorageLayer.csproj", "SysOps/OpsMain.StorageLayer/"]
-COPY ["SysOps/OpsMain/Shared/OpsMain.Shared.csproj", "SysOps/OpsMain/Shared/"]
-RUN dotnet restore "SysOps/OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj"
+COPY ["src/OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj", "src/OpsMain.IdsAuthentication/"]
+COPY ["src/OpsMain.StorageLayer/OpsMain.StorageLayer.csproj", "src/OpsMain.StorageLayer/"]
+COPY ["src/OpsMain/Shared/OpsMain.Shared.csproj", "src/OpsMain/Shared/"]
+RUN dotnet restore "./src/OpsMain.IdsAuthentication/OpsMain.IdsAuthentication.csproj"
 COPY . .
-WORKDIR "/src/SysOps/OpsMain.IdsAuthentication"
-RUN dotnet build "OpsMain.IdsAuthentication.csproj" -c Release -o /app/build
+WORKDIR "/src/src/OpsMain.IdsAuthentication"
+RUN dotnet build "./OpsMain.IdsAuthentication.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
-RUN dotnet publish "OpsMain.IdsAuthentication.csproj" -c Release -o /app/publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./OpsMain.IdsAuthentication.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
