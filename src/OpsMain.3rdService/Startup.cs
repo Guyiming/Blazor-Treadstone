@@ -33,7 +33,7 @@ namespace OpsMain._3rdService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSqlService(Configuration, "SysOpsConStr");
+            services.AddSqlService(Configuration, "MainConStr");
             services.AddMyDI();
 
             services.AddCors(opt =>

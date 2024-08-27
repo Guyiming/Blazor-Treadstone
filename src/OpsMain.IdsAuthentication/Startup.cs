@@ -29,7 +29,7 @@ namespace OpsMain.IdsAuthentication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSqlService(Configuration, "SysOpsConStr");
+            services.AddSqlService(Configuration, "MainConStr");
 
             services.AddCors(opt =>
             {
@@ -38,24 +38,32 @@ namespace OpsMain.IdsAuthentication
                     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 });
             });
-
-            var conStr = Configuration.GetConnectionString("SysIdsConStr");
-            var migrationAsm = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-            services.AddIdentityServer(opt =>
+            var conStr = Configuration.GetValue<string>("ASPNETCORE_MY_IDS_CONSTR");
+            if(string.IsNullOrEmpty(conStr))
             {
-                opt.Authentication.CookieSameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
-            })
+                conStr = Configuration.GetConnectionString("SysIdsConStr");
+            }
+
+            var migrationAsm = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+            services
+                .AddIdentityServer(opt =>
+                {
+                    opt.Authentication.CookieSameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
+                })
                 .AddConfigurationStore(opt =>
                 {
-                    opt.ConfigureDbContext = b => b.UseSqlServer(conStr, sql => sql.MigrationsAssembly(migrationAsm));
+                    //配置IClientStore, IResourceStore, and ICorsPolicyService
+                    opt.ConfigureDbContext = b => b.UseMySql(conStr, ServerVersion.AutoDetect(conStr), sql => sql.MigrationsAssembly(migrationAsm));
                 })
                 .AddOperationalStore(opt =>
                 {
-                    opt.ConfigureDbContext = b => b.UseSqlServer(conStr, sql => sql.MigrationsAssembly(migrationAsm));
+                    //配置PersistedGrantDbContext上下文，存储请求的token
+                    opt.ConfigureDbContext = b => b.UseMySql(conStr, ServerVersion.AutoDetect(conStr), sql => sql.MigrationsAssembly(migrationAsm));
                 });
 
             //用户名密码模式，增加自定义claim
             services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
+
             //授权码模式，添加自定义claim
             services.AddTransient<IProfileService, ProfileService>();
 

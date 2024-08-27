@@ -13,11 +13,16 @@ namespace OpsMain.StorageLayer
 {
     public static class LayerExtension
     {
-        public static void AddSqlService(this IServiceCollection services, IConfiguration configuation, string conSection)
+        public static void AddSqlService(this IServiceCollection services, IConfiguration configuation, string sectionName)
         {
+            string constr = configuation.GetValue<string>("ASPNETCORE_MY_MAIN_CONSTR");
+            if (string.IsNullOrEmpty(constr))
+            {
+                constr = configuation.GetConnectionString(sectionName);
+            }
+
             services.AddDbContext<TreadstoneMainContext>(opt =>
             {
-                var constr = configuation.GetConnectionString(conSection);
                 opt.UseMySql(constr, ServerVersion.AutoDetect(constr));
                 //opt.UseSqlServer(constr, o => o.EnableRetryOnFailure());
             });
