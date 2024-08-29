@@ -20,11 +20,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B096EEE-06E2-4EED-9D82-331247C3DBB2}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		BlazorHome.Dockerfile = BlazorHome.Dockerfile
 		Gateway.Dockerfile = Gateway.Dockerfile
 		Identity.Dockerfile = Identity.Dockerfile
+		Service.Dockerfile = Service.Dockerfile
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpsMain.Gateway", "OpsMain.Gateway\OpsMain.Gateway.csproj", "{56BC64CC-3AC4-46D4-A609-E9157C18A910}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpsMain.Gateway", "OpsMain.Gateway\OpsMain.Gateway.csproj", "{56BC64CC-3AC4-46D4-A609-E9157C18A910}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
