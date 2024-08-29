@@ -40,7 +40,8 @@ namespace OpsMain.Client
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("webapi"));
 
 
-            builder.Services.AddAntDesign();
+            builder.Services.AddMasaBlazor();
+
             builder.Services.AddOidcAuthentication(opt =>
             {
                 //¥”wwwroot/appsettings.json∂¡»°

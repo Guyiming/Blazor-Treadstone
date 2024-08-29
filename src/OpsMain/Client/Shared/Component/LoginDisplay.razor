@@ -43,7 +43,7 @@
     </AuthorizeView>
 </div>
 
-<Modal Title="修改密码"
+<PModal Title="修改密码"
        Visible="ShowChangePwdDialog"
        OnOk="OnSaveAsync"
        OnCancel="args=> { ShowChangePwdDialog = false; }"
@@ -62,12 +62,12 @@
         </ChildContent>
 
     </Form>
-</Modal>
+</PModal>
 
-<Modal Title="个人信息"
+<PModal Title="个人信息"
        Width="900d"
        Visible="ShowProfileDialog"
-       OnOk="args=>ShowProfileDialog=false"
+        OnSave="args=>ShowProfileDialog=false"
        OnCancel="args=>ShowProfileDialog=false">
     <Descriptions Bordered>
         <DescriptionsItem Title="用户名">@CurrentUser.UserName</DescriptionsItem>
@@ -75,7 +75,7 @@
         <DescriptionsItem Title="角色">@(string.Join("; ",CurrentUser.RoleNames))</DescriptionsItem>
         <DescriptionsItem Title="创建时间">@CurrentUser.CreateTime</DescriptionsItem>
     </Descriptions>
-</Modal>
+</PModal>
 
 
 @code {

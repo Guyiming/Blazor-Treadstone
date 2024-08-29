@@ -3,11 +3,11 @@
 @using System.Text
 
 
-<Row>
-    <AntDesign.Col Span="24">
+<MRow>
+    <MCol Cols="12">
         <TextArea @bind-Value="formattedCode" style="height:400px;"></TextArea>
-    </AntDesign.Col>
-</Row>
+    </MCol>
+</MRow>
 <br />
 <br />
 <Button Type="@AntDesign.ButtonType.Primary" Shape="round" @onclick="@FormatCode" Size="large" Block>格式化</Button>

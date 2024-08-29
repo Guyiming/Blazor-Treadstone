@@ -1,5 +1,4 @@
-﻿using AntDesign;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.RenderTree;
 using System;
@@ -14,10 +13,8 @@ namespace OpsMain.Client.Shared.Component.AntdExt
     {
         protected override void Render(RenderTreeBuilder builder)
         {
-      
             base.Render(builder);
 
-     
             builder.Clear();
 
             var layoutType = RouteData.PageType.GetCustomAttribute<LayoutAttribute>()?.LayoutType ?? DefaultLayout;
@@ -28,14 +25,12 @@ namespace OpsMain.Client.Shared.Component.AntdExt
             builder.AddAttribute(1, "Name", "RouteView");
             builder.AddAttribute(2, "Value", this);
 
-
             builder.AddAttribute(3, "ChildContent", (RenderFragment)(b =>
             {
                 b.OpenComponent(20, layoutType);
                 b.AddAttribute(21, "Body", body);
                 b.CloseComponent();
             }));
-
 
             builder.CloseComponent();
         }

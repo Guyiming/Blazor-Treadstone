@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AntDesign;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Rendering;
 using OpsMain.Client.Pages;
-using OpsMain.Client.Shared.Component.AntdExt;
 
 namespace OpsMain.Client.Shared.Component
 {

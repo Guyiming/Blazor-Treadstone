@@ -1,76 +1,90 @@
 ﻿@page "/management/menu"
 @inherits BasePage
 @attribute [Authorize(PolicyString.MenuAuthorize)]
-@inject RestMenuService MenuService
+@inject RestMenuService _menuService
 
-<Space>
-    <SpaceItem>
-        <Button Type="primary" OnClick="args=> { IsEdit = false;ShowDialog = true;CurrentMenu = new SysMenuDto() { ParentId=SelectedMenu?.Id??0,ParentName=SelectedMenu?.MenuName}; }">新增</Button>
-    </SpaceItem>
-    <SpaceItem>
-        <Button OnClick="args=> { IsEdit = true;ShowDialog = true;CurrentMenu = SelectedMenu; }">编辑</Button>
-    </SpaceItem>
-    <SpaceItem>
-        @if (CheckedKeys?.Count() > 0)
-        {
-            <Button Danger="true" OnClick="DeleteBatchAsync">批量删除</Button>
-        }
-    </SpaceItem>
-</Space>
+<MButtonGroup>
+    <MButton Depressed Color="primary" OnClick="args=> { IsEdit = false;ShowDialog = true;CurrentMenu = new SysMenuDto() { ParentId=SelectedMenu?.Id??0,ParentName=SelectedMenu?.MenuName}; }">新增</MButton>
+    <MButton Depressed Color="primary" OnClick="args=> { IsEdit = true;ShowDialog = true;CurrentMenu = SelectedMenu; }">编辑</MButton>
+    @if (CheckedKeys?.Count() > 0)
+    {
+        <MButton Depressed Color="error" OnClick="DeleteBatchAsync">批量删除</MButton>
+    }
+</MButtonGroup>
 
 <br />
 <br />
-<Spin Size="large" Spinning="IsLoading">
-    <Tree Checkable TItem="SysMenuDto"
-          @bind-CheckedKeys="CheckedKeys"
-          SelectedNodeChanged="OnSelectedNodeChanged"
-          OnSelect="OnSelect"
-          OnCheck="OnCheck"
-          DataSource="AllMenus"
-          IsLeafExpression="x=>x.TreeLevel>2"
-          TitleExpression="t=>t.DataItem.MenuName"
-          KeyExpression="t=>t.DataItem.Id.ToString()"
-          ChildrenExpression="t=>t.DataItem.SubMenus"
-          OnNodeLoadDelayAsync="LoadSubMenusAsync">
-    </Tree>
-</Spin>
 
-<Modal Title="@(IsEdit?"编辑菜单":"新增菜单")"
-       Visible="ShowDialog"
-       OnOk="async args=>
+<MTreeview Selectable TItem="SysMenuDto" TKey="long"
+           @bind-Value="CheckedKeys"
+           Items="AllMenus"
+           ItemText="o=>o.MenuName"
+           ItemChildren="o=>o.SubMenus"
+           ItemKey="o=>o.Id"
+           LoadChildren="LoadSubMenusAsync">
+</MTreeview>
+
+
+<PModal Title="@(IsEdit?"编辑菜单":"新增菜单")"
+        @bind-value="IsShowDialog"
+        OnSave="async args=>
              {
                  if(await SaveAsync())
                  {
-                     ShowDialog = false;
+                     IsShowDialog = false;
                  }
              }"
-       OnCancel="args=> { ShowDialog = false; }"
-       MaskClosable="false">
-    <Form Model="CurrentMenu" LabelColSpan="8" WrapperColSpan="16">
-        <FormItem Label="上级菜单">
-            <Input Disabled @bind-Value="CurrentMenu.ParentName" />
-        </FormItem>
-        <FormItem Label="名称">
-            <AntDesign.Input Placeholder="" @bind-Value="@CurrentMenu.MenuName">
-            </AntDesign.Input>
-        </FormItem>
-        <FormItem Label="路径">
-            <AntDesign.Input Placeholder="" @bind-Value="@CurrentMenu.Href">
-            </AntDesign.Input>
-        </FormItem>
-        <FormItem Label="图标">
-            <AntDesign.Input Placeholder="" @bind-Value="@CurrentMenu.Icon">
-            </AntDesign.Input>
-        </FormItem>
-        <FormItem Label="显示序号">
-            <Input @bind-Value="CurrentMenu.Icon" />
-        </FormItem>
-    </Form>
-</Modal>
+        OnCancel="args=> { IsShowDialog = false; }"
+        Persistent>
+    <MRow>
+        <MCol Cols="4">
+            <MSubheader>上级菜单</MSubheader>
+        </MCol>
+        <MCol Cols="8">
+            <MTextField Disabled @bind-Value="CurrentMenu.ParentName"></MTextField>
+        </MCol>
+    </MRow>
+
+    <MRow>
+        <MCol Cols="4">
+            <MSubheader>名称</MSubheader>
+        </MCol>
+        <MCol Cols="8">
+            <MTextField Placeholder="" @bind-Value="@CurrentMenu.MenuName"></MTextField>
+        </MCol>
+    </MRow>
+
+    <MRow>
+        <MCol Cols="4">
+            <MSubheader>路径</MSubheader>
+        </MCol>
+        <MCol Cols="8">
+            <MTextField Placeholder="" @bind-Value="@CurrentMenu.Href"></MTextField>
+        </MCol>
+    </MRow>
+
+    <MRow>
+        <MCol Cols="4">
+            <MSubheader>图标</MSubheader>
+        </MCol>
+        <MCol Cols="8">
+            <MTextField Placeholder="" @bind-Value="@CurrentMenu.Icon"></MTextField>
+        </MCol>
+    </MRow>
+
+    <MRow>
+        <MCol Cols="4">
+            <MSubheader>显示序号</MSubheader>
+        </MCol>
+        <MCol Cols="8">
+            <MTextField @bind-Value="CurrentMenu.Icon"></MTextField>
+        </MCol>
+    </MRow>
+</PModal>
 
 @code {
-    bool IsEdit = false, ShowDialog, IsLoading;
-    string[] CheckedKeys = new string[] { };
+    bool IsEdit = false, IsShowDialog, IsLoading;
+    List<long> CheckedKeys = new List<long>();
     List<SysMenuDto> AllMenus;
     SysMenuDto SelectedMenu, CurrentMenu;
 
@@ -88,7 +102,7 @@
 
     async Task<List<SysMenuDto>> LoadMenusAsync(long? parentId)
     {
-        var result = await MenuService.GetByParentIdAsync(this, parentId);
+        var result = await _menuService.GetByParentIdAsync(this, parentId);
         if (result != null)
         {
             return result;
@@ -97,32 +111,16 @@
 
     }
 
-    async Task LoadSubMenusAsync(TreeEventArgs<SysMenuDto> args)
+    async Task LoadSubMenusAsync(SysMenuDto dataItem)
     {
-        var dataItem = args.Node.DataItem;
         var subMenus = await LoadMenusAsync(dataItem.Id);
         dataItem.SubMenus.Clear();
         dataItem.SubMenus.AddRange(subMenus);
     }
 
-    void OnSelect(TreeEventArgs<SysMenuDto> args)
-    {
-        SelectedMenu = args.Node.DataItem;
-    }
-
-    void OnCheck(TreeEventArgs<SysMenuDto> args)
-    {
-        Console.WriteLine($"OnCheck {args.Node.DataItem.MenuName}");
-    }
-
-    void OnSelectedNodeChanged(TreeNode<SysMenuDto> e)
-    {
-        Console.WriteLine($"SelectedNodeChanged: {e?.DataItem.MenuName}");
-    }
-
     async Task DeleteBatchAsync(MouseEventArgs args)
     {
-        var result = await MenuService.DeleteAsync(this, CheckedKeys.ToList());
+        var result = await _menuService.DeleteAsync(this, CheckedKeys.ToList());
         ShowNotice(NotificationType.Info, "todo删除树中的节点");
     }
 
@@ -131,7 +129,7 @@
         if (IsEdit)
         {
             //编辑
-            var editMenu = await MenuService.EditAsync(this, CurrentMenu);
+            var editMenu = await _menuService.EditAsync(this, CurrentMenu);
             if (editMenu != null)
             {
                 var t = GetMenuInTree(AllMenus, CurrentMenu.Id);
@@ -146,7 +144,7 @@
         else
         {
             //新增
-            var newMenu = await MenuService.CreateAsync(this, CurrentMenu);
+            var newMenu = await _menuService.CreateAsync(this, CurrentMenu);
             if (newMenu != null)
             {
                 var t = GetMenuInTree(AllMenus, newMenu.ParentId);
