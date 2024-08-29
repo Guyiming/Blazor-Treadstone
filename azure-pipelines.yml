@@ -24,6 +24,6 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        dockerfile: '$(Build.SourcesDirectory)/src/OpsMain.IdsAuthentication/Dockerfile'
+        dockerfile: '$(Build.SourcesDirectory)/src/Dockerfile'
         tags: |
           $(tag)
