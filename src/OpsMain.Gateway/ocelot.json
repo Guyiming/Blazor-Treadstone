@@ -5,7 +5,7 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamHeaderTransform": {
         //"X-Forwarded-For": "{RemoteIpAddress}",
-        "X-Forwarded-Host": "{BaseUrl}"
+        "X-Forwarded-Host": "www.guyiming1.asia"
         //"X-Forwarded-Proto": "https"
       },
       "DownstreamPathTemplate": "/{identityeverything}",
