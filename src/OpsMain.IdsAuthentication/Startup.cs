@@ -3,6 +3,7 @@ using Duende.IdentityServer.Validation;
 using IdentityServerHost.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,14 @@ namespace OpsMain.IdsAuthentication
         {
             services.AddSqlService(Configuration, "MainConStr");
 
+            //配置转发头，使identity server在ocelot也中也可用
+            services.Configure<ForwardedHeadersOptions>(opt =>
+            {
+                opt.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+                opt.KnownNetworks.Clear();
+                opt.KnownProxies.Clear();
+            });
+
             services.AddCors(opt =>
             {
                 opt.AddPolicy("allowAll", builder =>
@@ -39,7 +48,7 @@ namespace OpsMain.IdsAuthentication
                 });
             });
             var conStr = Configuration.GetValue<string>("ASPNETCORE_MY_IDS_CONSTR");
-            if(string.IsNullOrEmpty(conStr))
+            if (string.IsNullOrEmpty(conStr))
             {
                 conStr = Configuration.GetConnectionString("SysIdsConStr");
             }
@@ -83,6 +92,8 @@ namespace OpsMain.IdsAuthentication
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            //配置转发头
+            app.UseForwardedHeaders();
             app.UseStaticFiles();
             app.UseCookiePolicy(new CookiePolicyOptions
             {
