@@ -3,6 +3,11 @@
     {
       "UpstreamPathTemplate": "/{identityeverything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamHeaderTransform": {
+        //"X-Forwarded-For": "{RemoteIpAddress}",
+        "X-Forwarded-Host": "{BaseUrl}"
+        //"X-Forwarded-Proto": "https"
+      },
       "DownstreamPathTemplate": "/{identityeverything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
