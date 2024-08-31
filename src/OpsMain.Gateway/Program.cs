@@ -10,7 +10,15 @@ namespace OpsMain.Gateway
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+            if(builder.Environment.IsDevelopment())
+            {
+                builder.Configuration.AddJsonFile("ocelot.Development.json", optional: false, reloadOnChange: true);
+            }
+            else
+            {
+                builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+            }
+            
             builder.Services.AddOcelot();
             builder.Services.AddControllers();
 

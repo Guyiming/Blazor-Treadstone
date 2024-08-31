@@ -2,7 +2,7 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <AuthorizeReuseTabsRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" AuthorizingLayout="@typeof(AuthorizingLayout)">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
                     @if (context.User.Identity.IsAuthenticated)
                     {
@@ -17,7 +17,7 @@
                 <Authorizing>
                     <p>»œ÷§ºÏ≤‚÷–............</p>
                 </Authorizing>
-            </AuthorizeReuseTabsRouteView>
+            </AuthorizeRouteView>
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(MainLayout)">
