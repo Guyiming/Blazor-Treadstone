@@ -83,7 +83,6 @@ namespace IdentityServerHost.Quickstart.UI
             }
         }
 
-
         //3.配置要保护的API资源
         public static List<ApiScope> ApiScopes => new List<ApiScope>
         {
@@ -96,7 +95,6 @@ namespace IdentityServerHost.Quickstart.UI
                     JwtClaimTypes.Name,
                     "menus"
                 },
-
             }
         };
 
@@ -124,15 +122,15 @@ namespace IdentityServerHost.Quickstart.UI
                 },
                 RedirectUris=
                 {
-                    "http://localhost:5000/authentication/login-callback",
-                    "http://tools.guyiming.shop/authentication/login-callback"
+                    "http://localhost:8070/authentication/login-callback",
+                    "http://www.guyiming1.asia/authentication/login-callback"
                 },
                 PostLogoutRedirectUris={
-                    "http://localhost:5000/authentication/logout-callback",
-                    "http://tools.guyiming.shop/authentication/logout-callback"
+                    "http://localhost:8070/authentication/logout-callback",
+                    "http://www.guyiming1.asia/authentication/logout-callback"
                 },
                 RequireClientSecret=false,//不需要设置secret
-                AllowedCorsOrigins={ "http://localhost:5000"}
+                AllowedCorsOrigins={ "http://localhost:8070"}
             },
             new Client
             {
@@ -158,17 +156,18 @@ namespace IdentityServerHost.Quickstart.UI
             },
         };
 
-
         public static void SeedData(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 #region 数据库迁移
+
                 serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
 
                 var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
                 context.Database.Migrate();
-                #endregion
+
+                #endregion 数据库迁移
 
                 //设置Clients
                 context.Clients.RemoveRange(context.Clients.ToArray());//清空所有
@@ -185,7 +184,6 @@ namespace IdentityServerHost.Quickstart.UI
                 context.ApiScopes.RemoveRange(context.ApiScopes.ToArray());
                 IdsConfig.ApiScopes.ForEach(a => context.ApiScopes.Add(a.ToEntity()));
                 context.SaveChanges();
-
             }
         }
     }

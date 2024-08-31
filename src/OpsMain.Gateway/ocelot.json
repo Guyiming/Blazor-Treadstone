@@ -5,7 +5,7 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamHeaderTransform": {
         //"X-Forwarded-For": "{RemoteIpAddress}",
-        "X-Forwarded-Host": "www.guyiming1.asia"
+        "X-Forwarded-Host": "gateway.guyiming1.asia"
         //"X-Forwarded-Proto": "https"
       },
       "DownstreamPathTemplate": "/{identityeverything}",
@@ -31,6 +31,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://www.guyiming1.asia"
+    "BaseUrl": "https://gateway.guyiming1.asia"
   }
 }
