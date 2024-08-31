@@ -180,7 +180,6 @@ namespace IdentityServerHost.Quickstart.UI
                 context.SaveChanges();
 
                 //设置ApiScope
-
                 context.ApiScopes.RemoveRange(context.ApiScopes.ToArray());
                 IdsConfig.ApiScopes.ForEach(a => context.ApiScopes.Add(a.ToEntity()));
                 context.SaveChanges();
