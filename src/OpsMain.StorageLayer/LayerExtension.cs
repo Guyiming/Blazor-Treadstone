@@ -28,6 +28,10 @@ namespace OpsMain.StorageLayer
             });
         }
 
+        /// <summary>
+        /// 依赖服务的汇总
+        /// </summary>
+        /// <param name="services"></param>
         public static void AddMyDI(this IServiceCollection services)
         {
             services.AddScoped<CommonRepoService<SysUser>>();

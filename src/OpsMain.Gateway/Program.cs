@@ -21,6 +21,13 @@ namespace OpsMain.Gateway
             
             builder.Services.AddOcelot();
             builder.Services.AddControllers();
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
 
             var app = builder.Build();
 
@@ -28,6 +35,7 @@ namespace OpsMain.Gateway
 
             app.UseAuthorization();
             app.UseOcelot();
+            app.UseCors();
 
             app.MapControllers();
 
