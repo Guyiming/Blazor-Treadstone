@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 17
+# Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpsMain.3rdService", "OpsMain.3rdService\OpsMain.3rdService.csproj", "{306434FC-4A9E-4ACE-8F24-8719D751998D}"

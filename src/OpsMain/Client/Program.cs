@@ -21,7 +21,7 @@ namespace OpsMain.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
+        
 
             builder.Services.AddSingleton<IAuthorizationHandler, MenuAuthorizeHandler>();
             builder.Services.AddScoped<CustomAuthorizationMessageHandler>();

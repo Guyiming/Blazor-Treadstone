@@ -24,7 +24,7 @@ namespace OpsMain.Server
         {
             services.AddControllersWithViews();
             services.AddRazorPages();
-
+            services.AddRazorComponents().AddInteractiveWebAssemblyComponents();
             services.AddSwaggerGen();
         }
 
@@ -41,7 +41,6 @@ namespace OpsMain.Server
                 app.UseExceptionHandler("/Error");
             }
 
-            app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
             app.UseSwagger();
@@ -53,13 +52,12 @@ namespace OpsMain.Server
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            
+            app.UseAntiforgery();
             app.UseEndpoints(endpoints =>
             {
-                
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                endpoints.MapFallbackToFile("index.html");
+                endpoints.MapRazorComponents<App>().AddInteractiveWebAssemblyRenderMode().AddAdditionalAssemblies(typeof(OpsMain.Client._Imports).Assembly);
             });
         }
     }
